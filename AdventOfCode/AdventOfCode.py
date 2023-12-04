@@ -1,5 +1,6 @@
 import sys
 import re
+from functools import reduce
 
 def day_1():
     # Create a variable to read files
@@ -83,5 +84,24 @@ def day_2():
     print(p1_total)
     print(p2_total)
 
+def day_3():
+    board = list(open('Files/Day_3.txt'))
+    chars = {(r, c): [] for r in range(140) for c in range(140)
+                        if board[r][c] not in '01234566789.'}
+
+    for r, row in enumerate(board):
+        for n in re.finditer(r'\d+', row):
+            edge = {(r, c) for r in (r-1, r, r+1)
+                           for c in range(n.start()-1, n.end()+1)}
+
+            for o in edge & chars.keys():
+                chars[o].append(int(n.group()))
+
+    p1 = sum(sum(p)  for p in chars.values()),
+    p2 = sum(reduce(lambda x, y: x * y, p) for p in chars.values() if len(p) == 2)
+
+    print(p1, p2)
+
+
 if __name__ == '__main__':
-    day_2()
+    day_3()
