@@ -102,6 +102,54 @@ def day_3():
 
     print(p1, p2)
 
+def day_4():
+    p1 = 0
+    p2 = 0
+
+    # Create a variable to read files
+    filename = "Files/Day_4.txt"
+    
+    def parse_file(file):
+        return [parse_line(ln) for ln in file]
+
+    def parse_line(line):
+        game_name, nums = line.split(':')
+        win, mine = nums.strip().split('|')
+        match = len(set(win.strip().split()) & set(mine.strip().split()))
+        return match
+
+    def process_file(file):
+        with open(file) as f:
+            yield from f.readlines()
+
+    def part1(games):
+        return sum(2 ** (n - 1) for n in games if n)
+
+    def part2(games):
+        ngames = len(games)
+        temp = [None] * ngames
+        return sum(
+            part2_rec(cn=i, games=games, temp=temp)
+            for i in range(0, ngames)
+        )
+
+    def part2_rec(cn, games, temp):
+        if temp[cn] is not None:
+           return temp[cn]
+        if cn >= len(games):
+            return 0
+        total = 1 + sum(
+            part2_rec(cn=i, games=games, temp=temp)
+            for i in range(cn+1, cn+games[cn]+1)
+        )
+        temp[cn] = total
+        return total    
+
+    input = parse_file(process_file(filename))
+    p1 = part1(input)
+    p2 = part2(input)
+
+    print (p1, p2)
 
 if __name__ == '__main__':
-    day_3()
+    day_4()
