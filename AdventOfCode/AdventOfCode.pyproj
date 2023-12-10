@@ -33,6 +33,7 @@
     <Content Include="Files\Day_3.txt" />
     <Content Include="Files\Day_4.txt" />
     <Content Include="Files\Day_8.txt" />
+    <Content Include="Files\Day_9.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

@@ -451,5 +451,66 @@ def day_8():
     pt_1()
     pt_2()
 
+def day_9():
+    filename = "Files/Day_9.txt"
+
+    file = open(filename).read().strip()
+    splits = file.split('\n')
+
+    p1 = 0
+    p2 = 0
+
+    def calculate_differences(numbers):
+        differences = [int(numbers[i + 1]) - int(numbers[i]) for i in range(len(numbers) - 1)]
+        return differences
+
+    def calculate_sum(numbers):
+        return sum(numbers)
+
+    def sum_last_elements(array):
+        l = len(array)    
+        if (l == 1):
+            return array[0]
+        array[l - 2] += array[l - 1]
+        del(array[l - 1])
+        return sum_last_elements(array)
+
+    def get_last_element(line, last_elements):
+        sum_line = calculate_sum(line)
+        last_element = line[len(line) - 1]
+        last_elements.append(last_element)
+        if sum_line == 0:
+            return sum_last_elements(last_elements)
+        new_line = calculate_differences(line)
+        return get_last_element(new_line, last_elements)
+
+    def sum_first_elements(array):
+        l = len(array)    
+        if (l == 1):
+            return array[0]
+        array[l - 2] -= array[l - 1]
+        del(array[l - 1])
+        return sum_first_elements(array)
+
+    def get_first_element(line, first_elements):
+        sum_line = calculate_sum(line)
+        first_element = line[0]
+        first_elements.append(first_element)
+        if sum_line == 0:
+            return sum_first_elements(first_elements)
+        new_line = calculate_differences(line)
+        return get_first_element(new_line, first_elements)
+
+    for line in splits:
+        int_line = list(map(int, line.split(' ')))    
+        last_elements = []
+        first_elements = []
+        p1 += get_last_element(int_line, last_elements)
+        p2 += get_first_element(int_line, first_elements)
+
+
+    print (p1)
+    print (p2)
+
 if __name__ == '__main__':
-    day_8()
+    day_9()
