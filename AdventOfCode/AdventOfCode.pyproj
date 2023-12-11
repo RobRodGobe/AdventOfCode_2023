@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Files\Day_1.txt" />
+    <Content Include="Files\Day_10.txt" />
     <Content Include="Files\Day_2.txt" />
     <Content Include="Files\Day_3.txt" />
     <Content Include="Files\Day_4.txt" />
