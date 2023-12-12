@@ -628,5 +628,23 @@ def day_10():
     print (p1)
     print (p2)
 
+def day_11():
+    filename = "Files/Day_11.txt"
+    p1 = 0
+    p2 = 0
+    xs, ys = zip(*[(x,y) for y,r in enumerate(open(filename))
+                     for x,c in enumerate(r) if c == '#'])
+    
+    def dist(ps):
+        ps = [sum((l, 1)[p in ps] for p in range(p)) for p in ps]
+        return sum(abs(a-b) for a in ps for b in ps)//2
+
+
+    for l in 2, 1_000_000:
+        p1, p2 = [sum(map(dist, [xs, ys])) for l in (2, 1_000_000)]
+
+        
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_10()
+    day_11()
