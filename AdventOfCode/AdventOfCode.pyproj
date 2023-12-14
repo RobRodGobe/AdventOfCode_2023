@@ -32,9 +32,13 @@
     <Content Include="Files\Day_10.txt" />
     <Content Include="Files\Day_11.txt" />
     <Content Include="Files\Day_12.txt" />
+    <Content Include="Files\Day_13.txt" />
     <Content Include="Files\Day_2.txt" />
     <Content Include="Files\Day_3.txt" />
     <Content Include="Files\Day_4.txt" />
+    <Content Include="Files\Day_5.txt" />
+    <Content Include="Files\Day_6.txt" />
+    <Content Include="Files\Day_7.txt" />
     <Content Include="Files\Day_8.txt" />
     <Content Include="Files\Day_9.txt" />
   </ItemGroup>
