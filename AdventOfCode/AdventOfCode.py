@@ -4,6 +4,7 @@ from functools import reduce
 from collections import defaultdict
 from typing import List, Tuple
 import math
+from functools import lru_cache
 
 def day_1():
     # Create a variable to read files
@@ -646,5 +647,51 @@ def day_11():
         
     print (p1, p2)
 
+def day_12():
+    filename = "Files/Day_12.txt"
+    p1 = 0
+    p2 = 0
+    
+
+    @lru_cache(maxsize=128, typed=False) # too slow without the cache - stpres function values
+    def numlegal(s,c):
+
+        s = s.lstrip('.') # ignore leading dots
+
+        # ['', ()] is legal
+        if s == '':
+            return int(c == ()) 
+
+        # [s, ()] is legal so long as s has no '#' (we can convert '?' to '.')
+        if c == ():
+            return int(s.find('#') == -1) 
+
+        # s starts with '#' so remove the first spring
+        if s[0] == '#':
+            if len(s) < c[0] or '.' in s[:c[0]]:
+                return 0 # impossible - not enough space for the spring
+            elif len(s) == c[0]:
+                return int(len(c) == 1) #single spring, right size
+            elif s[c[0]] == '#':
+                return 0 # springs must be separated by '.' (or '?') 
+            else:
+                return numlegal(s[c[0]+1:],c[1:]) # one less spring
+
+        # numlegal springs if we convert the first '?' to '#' + '.'
+        return numlegal('#'+s[1:],c) + numlegal(s[1:],c)
+
+
+    springs = [c.strip().split() for c in open(filename).readlines()]
+    ss = [[c[0],tuple(int(d) for d in c[1].split(','))] for c in springs]
+    p1 = sum(numlegal(s,c) for [s,c] in ss)
+
+
+    ss2 = [[(s[0]+'?')*4 + s[0],s[1]*5] for s in ss]
+    p2 = sum(numlegal(s,c) for [s,c] in ss2)
+
+
+        
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_11()
+    day_12()
