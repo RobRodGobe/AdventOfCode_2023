@@ -783,5 +783,94 @@ def day_13():
 
     print (p1, p2)
 
+def day_14():
+    filename = "Files/Day_14.txt"
+    p1 = 0
+    p2 = 0
+
+    with open(filename, "r") as file:
+        platform = file.read().splitlines()
+
+    platform = [list(row[::-1]) for row in zip(*platform)]
+
+    for row in platform:
+        for i, char in reversed(list(enumerate(row))):
+            if char == "O":
+                previous_index = i
+                current_index = i
+                reached_end = False
+                while not reached_end:
+                    if current_index + 1 < len(row) and row[current_index + 1] not in "#O":
+                        current_index += 1
+                    else:
+                        reached_end = True
+                row[previous_index] = "."
+                row[current_index] = "O"
+
+    platform = [[platform[j][i] for j in range(
+        len(platform))] for i in range(len(platform[0])-1, -1, -1)]
+
+    p1 = 0
+    current_row_num = len(platform)
+    for row in platform:
+        for char in row:
+            if char == "O":
+                p1 += current_row_num
+        current_row_num -= 1
+        
+    def tilt_north(platform):
+        platform = [list(row[::-1]) for row in zip(*platform)]
+
+        for row in platform:
+            for i, char in reversed(list(enumerate(row))):
+                if char == "O":
+                    previous_index = i
+                    current_index = i
+                    reached_end = False
+                    while not reached_end:
+                        if current_index + 1 < len(row) and row[current_index + 1] not in "#O":
+                            current_index += 1
+                        else:
+                            reached_end = True
+                    row[previous_index] = "."
+                    row[current_index] = "O"
+
+        return platform
+
+
+    def calculate_north_wall_load(platform):
+        north_wall_load = 0
+        current_row_num = len(platform)
+        for row in platform:
+            for char in row:
+                if char == "O":
+                    north_wall_load += current_row_num
+            current_row_num -= 1
+
+        return north_wall_load
+
+
+    with open(filename, "r") as file:
+        platform = file.read().splitlines()
+
+    seen_list = []
+    cycle_loop = []
+
+    for current_cycle in range(1, 1000000001):
+        for _ in range(4):
+            platform = tilt_north(platform)
+
+        if platform in seen_list:
+            index = seen_list.index(platform)
+            cycle_loop = seen_list[index:]
+            remaining_cycles = 1000000000 - current_cycle
+            index_billionth = remaining_cycles % len(cycle_loop)
+            p2 = calculate_north_wall_load(cycle_loop[index_billionth])
+            break
+
+        seen_list.append(platform)
+
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_13()
+    day_14()
