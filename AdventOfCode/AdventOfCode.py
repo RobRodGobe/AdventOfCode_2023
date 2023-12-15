@@ -1,10 +1,9 @@
 import sys
 import re
-from functools import reduce
+from functools import reduce, lru_cache
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 import math
-from functools import lru_cache
 
 def day_1():
     # Create a variable to read files
@@ -871,6 +870,42 @@ def day_14():
         seen_list.append(platform)
 
     print (p1, p2)
+    
+def day_15():
+    filename = "Files/Day_15.txt"
+    p1 = 0
+    p2 = 0
+
+    with open(filename, "r") as file:
+        sequence: List[str] = file.read().split(',')
+
+
+    def _hash(_s: str):
+        h: int = 0
+        for i in _s:
+            h = (h + ord(i)) * 17 % 256
+        return h
+
+
+    p1 = sum(_hash(i) for i in sequence)
+
+
+    # Part 2
+    boxes: Dict[int, Dict[str, int]] = {i: {} for i in range(256)}
+
+    for op in sequence:
+        if op[-2] == '=':
+            s, v = op.split('=')
+            boxes[_hash(s)][s] = int(v)
+        elif op[-1] == '-':
+            s: str = op[:-1]
+            hsh: int = _hash(s)
+            if s in boxes[hsh]:
+                del boxes[hsh][s]
+
+    p2 = sum(sum((m + 1) * v * (i + 1) for i, v in enumerate(box.values())) for m, box in enumerate(boxes.values()))
+
+    print (p1, p2)
 
 if __name__ == '__main__':
-    day_14()
+    day_15()
