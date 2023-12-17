@@ -4,6 +4,7 @@ from functools import reduce, lru_cache
 from collections import defaultdict
 from typing import List, Tuple, Dict
 import math
+import heapq
 
 def day_1():
     # Create a variable to read files
@@ -1016,5 +1017,35 @@ def day_16():
 
     print (p1, p2)
 
+def day_17():
+    filename = "Files/Day_17.txt"
+    p1 = 0
+    p2 = 0
+
+    def minimal_heat(start, end, least, most):
+        queue = [(0, *start, 0,0)]
+        seen = set()
+        while queue:
+            heat,x,y,px,py = heapq.heappop(queue)
+            if (x,y) == end: return heat
+            if (x,y, px,py) in seen: continue
+            seen.add((x,y, px,py))
+            # calculate turns only
+            for dx,dy in {(1,0),(0,1),(-1,0),(0,-1)}-{(px,py),(-px,-py)}:
+                a,b,h = x,y,heat
+                # enter 4-10 moves in the chosen direction
+                for i in range(1,most+1):
+                    a,b=a+dx,b+dy
+                    if (a,b) in board:
+                        h += board[a,b]
+                        if i>=least:
+                            heapq.heappush(queue, (h, a,b, dx,dy))
+
+    board = {(i,j): int(c) for i,r in enumerate(open(filename)) for j,c in enumerate(r.strip())}
+    p1 = minimal_heat((0,0),max(board), 1, 3)
+    p2 = minimal_heat((0,0),max(board), 4, 10)
+
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_16()
+    day_17()
