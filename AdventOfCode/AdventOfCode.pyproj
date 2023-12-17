@@ -35,6 +35,7 @@
     <Content Include="Files\Day_13.txt" />
     <Content Include="Files\Day_14.txt" />
     <Content Include="Files\Day_15.txt" />
+    <Content Include="Files\Day_16.txt" />
     <Content Include="Files\Day_2.txt" />
     <Content Include="Files\Day_3.txt" />
     <Content Include="Files\Day_4.txt" />
