@@ -1,4 +1,6 @@
+from gettext import find
 from msilib.schema import File
+import queue
 import sys
 import re
 from functools import reduce, lru_cache
@@ -8,6 +10,7 @@ import math, time
 import heapq
 from functools import reduce
 import operator
+from heapq import heapify, heappush, heappop
 
 def day_1():
     # Create a variable to read files
@@ -1316,12 +1319,54 @@ def day_20():
             result = result * value // gcd(result, value)
         return result
 
-    time_start = time.perf_counter()
+    
     resolved = solve(load(filename))
     p1 = resolved[0]
     p2 = resolved[1]
 
     print (p1, p2)
 
+def day_21():
+    filename = "Files/Day_21.txt"
+    p1 = 0
+    p2 = 0
+    
+    p1_steps = 64
+    p2_steps = 26501365
+
+    with open(filename, "r") as file:
+        data = file.read().splitlines()
+        ln, steps, cycle, seen, even, odd, n = len(data), 0, [], set(), set(), set(), p2_steps
+        grid = {(x, y): data[y][x] for x in range(ln) for y in range(ln)}
+        queue = [(steps, next((k for k, v in grid.items() if v == "S")))]
+        heapify(queue)
+        while queue:
+            new_steps, (x, y) = heappop(queue)
+            if (x, y) in seen:
+                continue
+            seen.add((x, y))
+            if new_steps != steps:
+                if steps == p1_steps:
+                    p1 = len(even)
+                if steps % (ln * 2) == n % (ln * 2):
+                    if len(cycle) == 3:
+                        p2, offset, increment = cycle[0], cycle[1] - cycle[0], (
+                                    cycle[2] - cycle[1]) - (cycle[1] - cycle[0])
+                        for x in range(n // (ln * 2)):
+                            p2 += offset
+                            offset += increment
+                        break
+                    cycle.append(len([even, odd][steps % 2]))
+            steps, next_steps = new_steps, new_steps + 1
+            for a, b in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                if grid[a % ln, b % ln] != "#":
+                    if not next_steps % 2:
+                        even.add((a, b))
+                    else:
+                        odd.add((a, b))
+                    heappush(queue, (next_steps, (a, b)))
+    
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_20()
+    day_21()
