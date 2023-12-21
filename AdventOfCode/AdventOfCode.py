@@ -4,9 +4,10 @@ import re
 from functools import reduce, lru_cache
 from collections import defaultdict
 from typing import List, Tuple, Dict
-import math
+import math, time
 import heapq
 from functools import reduce
+import operator
 
 def day_1():
     # Create a variable to read files
@@ -1227,5 +1228,100 @@ def day_19():
     
     print (p1, p2)
 
+def day_20():
+    filename = "Files/Day_20.txt"
+    p1 = 0
+    p2 = 0
+    
+    def load(file):
+      with open(file) as f:
+        return [row.strip().split(' -> ') for row in f]
+  
+    class Module():
+      def __init__(self,name,type,dest):
+        self.name = name
+        self.type = type
+        self.dest = dest
+        if type == '%': 
+            self.mem = False
+        elif type == '&': 
+            self.mem = {}
+        else:
+            self.mem = None  
+
+      def __repr__(self):
+        return f'Name: {self.name} Type: {self.type} Dest: {self.dest} Mem: {self.mem}'
+  
+      def receive_impulse(self,impulse,last):
+        if self.type == '%':
+          self.mem = not self.mem
+          return self.mem
+    
+        if self.type == '&':
+          self.mem[last] = impulse
+          return not all(self.mem.values())
+
+    
+    def solve(p):
+      modules = dict()
+      for module, destinations in p:
+        curr = [d.strip() for d in destinations.split(',')]
+        if module == 'broadcaster':
+          modules[module] = Module('broadcaster',None,curr)
+        else:
+          modules[module[1:]] = Module(module[1:],module[0],curr)
+  
+      for object in modules.values():
+        for dest in object.dest:
+          if dest not in modules: continue
+          obj2 = modules[dest]
+          if obj2.type != '&': continue
+          obj2.mem[object.name]=False
+  
+      main_module = [m.name for m in modules.values() if 'rx' in m.dest][0]
+      lowHigh, cycles  = [0,0], {m:0 for m in modules[main_module].mem}
+  
+      for buttons in range(1,10_000): 
+        if all(cycles.values()): break
+        queue = [(dest,False,'broadcaster') for dest in modules['broadcaster'].dest]
+        if buttons < 1001: lowHigh[0] += 1
+    
+        while queue:
+          curr, impulse, last = queue.pop(0)
+          if buttons < 1001: lowHigh[impulse] += 1
+          if curr not in modules: continue
+          curr = modules[curr]
+
+          if curr.name == main_module and impulse:
+            cycles[last] = buttons - cycles[last]
+            
+          if curr.type == '%' and impulse: continue
+          impulse = curr.receive_impulse(impulse,last)
+      
+          for nxt in curr.dest:
+            queue.append((nxt, impulse, curr.name))
+            
+      return lowHigh[0] * lowHigh[1], lcm(*list(cycles.values()))
+
+    def gcd(x, y):
+        while y:
+            x, y = y, x % y
+        return x
+
+    def lcm(*args):
+        if not args:
+            return 1
+        result = args[0]
+        for value in args[1:]:
+            result = result * value // gcd(result, value)
+        return result
+
+    time_start = time.perf_counter()
+    resolved = solve(load(filename))
+    p1 = resolved[0]
+    p2 = resolved[1]
+
+    print (p1, p2)
+
 if __name__ == '__main__':
-    day_19()
+    day_20()
