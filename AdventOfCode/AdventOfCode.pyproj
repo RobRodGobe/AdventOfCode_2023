@@ -41,6 +41,7 @@
     <Content Include="Files\Day_19.txt" />
     <Content Include="Files\Day_2.txt" />
     <Content Include="Files\Day_20.txt" />
+    <Content Include="Files\Day_21.txt" />
     <Content Include="Files\Day_3.txt" />
     <Content Include="Files\Day_4.txt" />
     <Content Include="Files\Day_5.txt" />
@@ -48,6 +49,7 @@
     <Content Include="Files\Day_7.txt" />
     <Content Include="Files\Day_8.txt" />
     <Content Include="Files\Day_9.txt" />
+    <Content Include="Files\Day_22.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
