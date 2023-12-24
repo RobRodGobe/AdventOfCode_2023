@@ -11,6 +11,9 @@ import heapq
 from functools import reduce
 import operator
 from heapq import heapify, heappush, heappop
+import numpy as np
+from sympy import Symbol
+from sympy import solve_poly_system
 
 def day_1():
     # Create a variable to read files
@@ -1541,5 +1544,70 @@ def day_23(filename="Files/Day_23.txt"):
 
     print(p1, p2)
 
+def day_24(filename="Files/Day_24.txt"):
+    p1, p2 = 0, 0
+
+    handle = open(filename,"r")
+    
+    shards = []
+    for line in handle:
+      pos, vel = line.strip().split(" @ ")
+      px,py,pz = pos.split(", ")
+      vx,vy,vz = vel.split(", ")
+      shards.append((int(px),int(py),int(pz),int(vx),int(vy),int(vz)))
+
+    count = 0
+
+    for adx in range(len(shards)-1):
+      shard_a = shards[adx]
+      ma = shard_a[4]/shard_a[3] # pendiente de la recta
+      ba = shard_a[1] - ma * shard_a[0] # ordenada a la base
+      for bdx in range(adx+1,len(shards)):
+        shard_b = shards[bdx]
+        mb = shard_b[4]/shard_b[3] # pendiente de la recta
+        bb = shard_b[1] -mb * shard_b[0] # ordenada a la base
+        if ma == mb: # parallel lines
+          if ba == bb: # sanity check
+            print(shard_a,shard_b,"this is the same picture") # silly reference to The Office
+            exit()
+          continue
+        ix = (bb - ba)/(ma - mb)
+        iy = ma*ix + ba
+
+        ta = (ix - shard_a[0])/shard_a[3]
+        tb = (ix - shard_b[0])/shard_b[3]
+
+        if ta >= 0 and tb >= 0 and ix >= 200000000000000 and ix <= 400000000000000 and iy >= 200000000000000 and iy <= 400000000000000:
+          count+=1
+
+    p1 = count
+    
+    x = Symbol('x')
+    y = Symbol('y')
+    z = Symbol('z')
+    vx = Symbol('vx')
+    vy = Symbol('vy')
+    vz = Symbol('vz')
+
+    equations = []
+    t_syms = []
+    for idx,shard in enumerate(shards[:3]):
+      x0,y0,z0,xv,yv,zv = shard
+      t = Symbol('t'+str(idx)) # represents each intersection
+
+      eqx = x + vx*t - x0 - xv*t
+      eqy = y + vy*t - y0 - yv*t
+      eqz = z + vz*t - z0 - zv*t
+
+      equations.append(eqx)
+      equations.append(eqy)
+      equations.append(eqz)
+      t_syms.append(t)
+      
+    result = solve_poly_system(equations,*([x,y,z,vx,vy,vz]+t_syms))
+    p2 = result[0][0]+result[0][1]+result[0][2]
+
+    print(p1, p2)
+
 if __name__ == "__main__":
-    day_23()
+    day_24()
