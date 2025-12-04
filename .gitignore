@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local puzzle inputs (do not commit personal/problem input files)
+# This ignores the InputFiles folder and everything under it.
+/Files/
